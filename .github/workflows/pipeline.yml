@@ -39,7 +39,7 @@ jobs:
     name: Build Image
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: sonarcloud
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
