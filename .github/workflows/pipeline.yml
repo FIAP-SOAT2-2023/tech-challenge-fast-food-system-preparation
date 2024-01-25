@@ -1,19 +1,20 @@
 name: SonarCloud
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 env:
-  AWS_REGION: ${{ vars.AWS_REGION }}                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ${{ vars.MY_ECR_REPOSITORY }}           # set this to your Amazon ECR repository name
-  ECS_SERVICE: ${{ vars.MY_ECS_SERVICE }}           # set this to your Amazon ECS service name
-  ECS_CLUSTER: ${{ vars.MY_ECS_CLUSTER }}          # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: ${{ vars.MY_ECS_TASK_DEFINITION }} # set this to the path to your Amazon ECS task definition
-  # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}           # set this to the name of the container in the
-  # containerDefinitions section of your task definition
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REPOSITORY: ${{ vars.MY_ECR_REPOSITORY }}
+  ECS_SERVICE: ${{ vars.MY_ECS_SERVICE }}
+  ECS_CLUSTER: ${{ vars.MY_ECS_CLUSTER }}
+  ECS_TASK_DEFINITION: ${{ vars.MY_ECS_TASK_DEFINITION }}
+  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+
 jobs:
   build:
     name: Build and analyze
@@ -21,12 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: 21
-          distribution: 'zulu' # Alternative distribution options are available.
+          distribution: 'zulu'
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
@@ -41,10 +42,11 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=FIAP-SOAT2-2023_tech-challenge-fast-food-system-preparation
-  ecr:
+
+  build-and-docker:
     name: Build Image
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -52,6 +54,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up JDK 21 for Docker build
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: 'zulu'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
