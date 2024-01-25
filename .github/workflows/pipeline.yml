@@ -55,14 +55,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Maven Clean and Package
-        run: mvn clean package
-
       - name: Set up JDK 21 for Docker build
         uses: actions/setup-java@v3
         with:
           java-version: 21
           distribution: 'zulu'
+
+      - name: Maven Clean and Package
+        run: mvn clean package
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
