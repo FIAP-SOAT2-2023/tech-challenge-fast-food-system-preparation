@@ -35,3 +35,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=FIAP-SOAT2-2023_tech-challenge-fast-food-system-preparation
+  ecr:
+    name: Build Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: sonarcloud
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        run: |
+          docker build --platform=linux/amd64 -t ${{ env.CONTAINER_NAME }} .
+          docker tag ${{ env.CONTAINER_NAME }}:latest ${{ env.ECR_REPOSITORY }}
+          docker push ${{ env.ECR_REPOSITORY }}
