@@ -21,4 +21,4 @@ RUN cp ./target/*.jar app.jar
 EXPOSE 8080
 
 # Comando padrão para iniciar o aplicativo
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "/usr/src/app/app.jar"]
