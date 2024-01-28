@@ -17,6 +17,9 @@ RUN mvn clean package
 # Copiar qualquer arquivo JAR no diretório target para app.jar
 RUN cp ./target/*.jar app.jar
 
+# Dar permissões para qualquer usuário no arquivo app.jar
+RUN chmod +rwx /usr/src/app/app.jar
+
 # Expor a porta necessária
 EXPOSE 8080
 
