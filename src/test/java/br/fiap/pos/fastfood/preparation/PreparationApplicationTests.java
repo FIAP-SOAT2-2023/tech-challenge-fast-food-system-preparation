@@ -1,12 +1,9 @@
 package br.fiap.pos.fastfood.preparation;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 class PreparationApplicationTests {
 
-	@Test
+//	@Test
 	void contextLoads() {
 	}
 

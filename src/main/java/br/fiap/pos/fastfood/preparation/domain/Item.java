@@ -7,6 +7,10 @@ public class Item {
 
     // Constructors, getters, and setters omitted for brevity
 
+    public Item(String name, int quantity) {
+        this.name = name;
+        this.quantity = quantity;
+    }
     public String getName() {
         return name;
     }
