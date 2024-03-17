@@ -2,6 +2,7 @@ package br.fiap.pos.fastfood.preparation.controllers;
 
 import br.fiap.pos.fastfood.preparation.domain.Order;
 import br.fiap.pos.fastfood.preparation.repository.OrderRepository;
+import br.fiap.pos.fastfood.preparation.service.OrderExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,9 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderExternalService orderExternalService;
 
     @PostMapping("/create")
     public Order createOrder(@RequestBody Order order) {
@@ -29,5 +33,18 @@ public class OrderController {
     @GetMapping("/list")
     public List<Order> listOrders() {
         return orderRepository.findAll();
+    }
+
+    @PutMapping("/update-status/{id}/{status}")
+    public Order updateStatus(@PathVariable String id, @PathVariable String status) {
+        Order order = orderRepository.findById(id).orElseThrow();
+        order.setStatus(status);
+        orderRepository.save(order);
+
+        orderExternalService.publishMessageInQueueSQS(order);
+
+
+        return order;
+
     }
 }

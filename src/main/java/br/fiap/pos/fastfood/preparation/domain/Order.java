@@ -3,6 +3,7 @@ package br.fiap.pos.fastfood.preparation.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "orders")
@@ -16,6 +17,8 @@ public class Order {
     private String userId;
     private String userName;
     private String status;
+
+    private LocalDateTime createdAt;
 
     // Constructors, getters, and setters omitted for brevity
 
@@ -67,5 +70,11 @@ public class Order {
         this.status = status;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
